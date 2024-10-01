@@ -67,6 +67,22 @@ function getPosts() {
     res.status(201).json(newPost);
   });
   
+  // Route to handle post likes
+  app.post('/posts/:id/like', (req, res) => {
+    const postId = parseInt(req.params.id);
+    const posts = getPosts();
+  
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      post.likes += 1;
+      savePosts(posts);
+      res.status(200).json({ likes: post.likes });
+    } else {
+      console.error(`Post not found for ID: ${postId}`); 
+      res.status(404).json({ error: 'Post not found' });
+    }
+  });
+   
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
