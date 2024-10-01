@@ -1,21 +1,36 @@
 [
-    {
-      "id": 1,
-      "title": "Capturing Moments: My First Event Photography Gig",
-      "author": "Onthatile Nongqotho",
-      "image": "https://via.placeholder.com/150",
-      "content": "I recently had the chance to capture a startup event. It was exhilarating to see the energy in the room and capture candid moments.",
-      "publishDate": "September 20, 2024",
-      "likes": 8,
-      "comments": [
-        {
-          "author": "Enhle Majola",
-          "content": "Great article, love the photos!"
-        },
-        {
-          "author": "Nozzie Nzimande",
-          "content": "How beautiful"
-        }
-      ]
-    }
-  ]
+  {
+    "id": 1,
+    "title": "Capturing Moments: My First Event Photography Gig",
+    "author": "Onthatile Nongqotho",
+    "image": "https://via.placeholder.com/150",
+    "content": "I recently had the chance to capture a startup event. It was exhilarating to see the energy in the room and capture candid moments.",
+    "publishDate": "September 20, 2024",
+    "likes": 8,
+    "comments": [
+      {
+        "author": "Enhle Majola",
+        "content": "Great article, love the photos!"
+      },
+      {
+        "author": "Nozzie Nzimande",
+        "content": "How beautiful"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Testing",
+    "author": "Tesyong",
+    "image": "dumm.url",
+    "content": "testingg",
+    "publishDate": "01/10/2024",
+    "likes": 3,
+    "comments": [
+      {
+        "author": "Nozzie",
+        "content": "Wooh"
+      }
+    ]
+  }
+]

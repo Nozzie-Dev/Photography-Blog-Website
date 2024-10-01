@@ -2,8 +2,8 @@ import React from 'react';
 
 const LandingPage = () => {
   return (
-    <div className="container mx-auto mt-10 p-6 bg-gray-100 shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold text-blue-600 mb-6">Welcome to My Photography Blog</h1>
+    <div className="container mx-auto mt-10 p-6 bg-pink-100 shadow-lg rounded-lg">
+      <h1 className="text-4xl font-bold text-purple-600 mb-6">Welcome to My Photography Blog</h1>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-800">About Me</h2>
