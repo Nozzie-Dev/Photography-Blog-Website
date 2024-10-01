@@ -26,6 +26,16 @@ function getPosts() {
     }
   }
   
+  //Write posts to the JSON file
+  function savePosts(posts) {
+    try {
+      fs.writeFileSync(postsFilePath, JSON.stringify(posts, null, 2), 'utf8');
+      console.log('Posts saved successfully.'); // Log when posts are saved
+    } catch (error) {
+      console.error('Error writing to posts file:', error);
+    }
+  }
+  
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
