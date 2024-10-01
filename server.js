@@ -83,6 +83,29 @@ function getPosts() {
     }
   });
    
+  // Route to add a comment to a post
+  app.post('/posts/:id/comment', (req, res) => {
+    const postId = parseInt(req.params.id);
+    const { author, content } = req.body;
+  
+    if (!author || !content) {
+      return res.status(400).json({ error: 'Author and content are required' });
+    }
+  
+    const posts = getPosts();
+    const post = posts.find(p => p.id === postId);
+  
+    if (post) {
+      const newComment = { author, content };
+      post.comments.push(newComment);
+      savePosts(posts);
+      res.status(201).json(newComment);
+    } else {
+      console.error(`Post not found for ID: ${postId}`); 
+      res.status(404).json({ error: 'Post not found' });
+    }
+  });
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
