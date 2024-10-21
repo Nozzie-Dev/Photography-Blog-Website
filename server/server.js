@@ -67,6 +67,26 @@ app.post('/posts', (req, res) => {
   });
 });
 
+// POST: Like post
+app.post('/posts/:id/like', (req, res) => {
+  const postId = parseInt(req.params.id);
+
+  const findQuery = 'SELECT * FROM Posts WHERE id = ?';
+  db.query(findQuery, [postId], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const updateQuery = 'UPDATE Posts SET likes = likes + 1 WHERE id = ?';
+    db.query(updateQuery, [postId], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(200).json({ likes: results[0].likes + 1 });
+    });
+  });
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
