@@ -38,6 +38,36 @@ app.get('/posts', (req, res) => {
   });
 });
 
+// POST: Add new post
+app.post('/posts', (req, res) => {
+  const { title, author_id, image, content } = req.body;
+
+  if (!title || !author_id || !content) {
+    return res.status(400).json({ error: 'Title, author, and content are required' });
+  }
+
+  const query = `INSERT INTO Posts (title, author_id, image, content, publish_date, likes) 
+                 VALUES (?, ?, ?, ?, NOW(), 0)`;
+
+  db.query(query, [title, author_id, image || 'https://via.placeholder.com/150', content], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const newPost = {
+      id: result.insertId,
+      title,
+      author_id,
+      image: image || 'https://via.placeholder.com/150',
+      content,
+      publish_date: new Date().toLocaleDateString(),
+      likes: 0,
+      comments: []
+    };
+    res.status(201).json(newPost);
+  });
+});
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
