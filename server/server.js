@@ -87,6 +87,37 @@ app.post('/posts/:id/like', (req, res) => {
   });
 });
 
+// POST: Add a comment
+app.post('/posts/:id/comment', (req, res) => {
+  const postId = parseInt(req.params.id);
+  const { author, content } = req.body;
+
+  if (!author || !content) {
+    return res.status(400).json({ error: 'Author and content are required' });
+  }
+
+  const findPostQuery = 'SELECT * FROM Posts WHERE id = ?';
+  db.query(findPostQuery, [postId], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const addCommentQuery = 'INSERT INTO Comments (post_id, author, content) VALUES (?, ?, ?)';
+    db.query(addCommentQuery, [postId, author, content], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      const newComment = {
+        id: result.insertId,
+        post_id: postId,
+        author,
+        content
+      };
+      res.status(201).json(newComment);
+    });
+  });
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
