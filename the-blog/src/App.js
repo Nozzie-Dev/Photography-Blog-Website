@@ -20,7 +20,7 @@ function App() {
       <header className="App-header bg-gradient-to-r from-purple-500 to-pink-500 p-6">
   <nav>
     <ul className="flex justify-between items-center space-x-6">
-      <li className="text-white text-xl font-bold">Onthatile The Blog</li>
+      
       <li>
         <Link to="/" className="text-white hover:text-gray-300">Home</Link>
       </li>
@@ -45,7 +45,7 @@ function App() {
               path="/blog"
               element={
                 posts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-8">
                     {posts.map((post, index) => (
                       <BlogView key={index} post={post} />
                     ))}

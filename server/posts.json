@@ -3,9 +3,9 @@
     "id": 1,
     "title": "Capturing Moments: My First Event Photography Gig",
     "author": "Onthatile Nongqotho",
-    "image": "https://via.placeholder.com/150",
+    "image": "https://mjmattorneys.co.za/sitepad-data/uploads/2023/09/defamation-4.png",
     "content": "I recently had the chance to capture a startup event. It was exhilarating to see the energy in the room and capture candid moments.",
-    "publishDate": "September 20, 2024",
+    "publishDate": "2024-09-20",
     "likes": 8,
     "comments": [
       {
@@ -20,16 +20,73 @@
   },
   {
     "id": 2,
-    "title": "Testing",
-    "author": "Tesyong",
-    "image": "dumm.url",
-    "content": "testingg",
-    "publishDate": "01/10/2024",
-    "likes": 3,
+    "title": "The Art of Street Photography: Finding Beauty in Everyday Life",
+    "author": "Enhle Majola",
+    "image": "https://seandurham.eu/wp-content/uploads/2024/03/image-6.jpeg",
+    "content": "Street photography is all about capturing the rawness of everyday life. From bustling markets to quiet corners, there's beauty in the mundane. I've learned to keep my camera ready to seize those fleeting moments.",
+    "publishDate": "2024-09-27",
+    "likes": 14,
     "comments": [
       {
-        "author": "Nozzie",
-        "content": "Wooh"
+        "author": "Sibusiso Khumalo",
+        "content": "Love your perspective on street life!"
+      },
+      {
+        "author": "Lerato Mokoena",
+        "content": "Such inspiring work!"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Exploring Nature: The Joys of Landscape Photography",
+    "author": "Onthatile Nongqotho",
+    "image": "https://cdn.naturettl.com/wp-content/uploads/2020/04/25152036/how-to-find-great-locations-for-landscape-photography-11-900x600.jpg",
+    "content": "There’s nothing quite like being in nature and capturing its beauty through landscape photography. Whether it's mountains, forests, or oceans, I find peace and inspiration in these stunning locations.",
+    "publishDate": "2024-09-29",
+    "likes": 15,
+    "comments": [
+      {
+        "author": "Thabo Ndlovu",
+        "content": "Your landscapes are breathtaking!"
+      },
+      {
+        "author": "Amina Radebe",
+        "content": "Can't wait to see more of your work!"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Mastering Portraits: Tips for Capturing Emotions",
+    "author": "Onthatile Nongqotho",
+    "image": "https://yaffa-cdn.s3.amazonaws.com/yaffadsp/images/dmImage/StandardImage/image-18.jpg",
+    "content": "Portrait photography is an art form that allows us to capture the essence of a person. By connecting with my subjects and understanding their stories, I can create powerful images that evoke emotion.",
+    "publishDate": "2024-10-01",
+    "likes": 10,
+    "comments": [
+      {
+        "author": "Zanele Mthembu",
+        "content": "Great tips! I love your portrait style!"
+      },
+      {
+        "author": "Sipho Moyo",
+        "content": "Can't wait to try these techniques!"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Noodle",
+    "author": "Nozzie Nzimande",
+    "image": "https://res.cloudinary.com/yaffa-publishing/image/fetch/q_auto:best,c_fit,w_630,f_auto/http%3A%2F%2Fyaffa%2Dcdn.s3.amazonaws.com%2Fyaffadsp%2Fimages%2FdmImage%2FSourceImage%2Fimage%2D54.jpg",
+    "content": "\n\nThis moment captures the simple joy of savoring a warm meal, highlighting the comfort and satisfaction that food brings. It evokes a sense of warmth, nourishment, and human connection, reflecting the universal pleasure found in enjoying a favorite dish. The timeless quality of the scene emphasizes the deeper emotional significance of everyday moments, reminding us of the joy in life's simplest pleasures.",
+    "publishDate": "01/10/2024",
+    "likes": 2,
+    "comments": [
+      {
+        "author": "Ntando Vilakazi",
+        "content": "Ohhh"
       }
     ]
   }
