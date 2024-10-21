@@ -3,12 +3,12 @@ const mysql = require('mysql2');
 const cors = require('cors');
 require('dotenv').config();
 
-// middleware
+// Middleware
 const app = express();
 app.use(cors());
 app.use(express.json()); 
 
-// connect to db
+// Connect to DB
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -25,12 +25,30 @@ db.connect((err) => {
   }
 });
 
-// API routes
+// API Routes
 
-// GET: Read posts
+// GET: Read posts with likes and comments
 app.get('/posts', (req, res) => {
-  const query = 'SELECT * FROM Posts';
+  const query = `
+    SELECT p.id, p.title, p.author_id, a.fullname AS author, p.image, p.content, p.publish_date, p.likes
+    FROM Posts p
+    JOIN Authors a ON p.author_id = a.author_id
+  `;
+  
   db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+// GET: Read comments for each post
+app.get('/posts/:id/comments', (req, res) => {
+  const postId = parseInt(req.params.id);
+  const query = 'SELECT * FROM Comments WHERE post_id = ?';
+
+  db.query(query, [postId], (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -46,8 +64,10 @@ app.post('/posts', (req, res) => {
     return res.status(400).json({ error: 'Title, author, and content are required' });
   }
 
-  const query = `INSERT INTO Posts (title, author_id, image, content, publish_date, likes) 
-                 VALUES (?, ?, ?, ?, NOW(), 0)`;
+  const query = `
+    INSERT INTO Posts (title, author_id, image, content, publish_date, likes) 
+    VALUES (?, ?, ?, ?, NOW(), 0)
+  `;
 
   db.query(query, [title, author_id, image || 'https://via.placeholder.com/150', content], (err, result) => {
     if (err) {
@@ -61,7 +81,6 @@ app.post('/posts', (req, res) => {
       content,
       publish_date: new Date().toLocaleDateString(),
       likes: 0,
-      comments: []
     };
     res.status(201).json(newPost);
   });
@@ -78,7 +97,7 @@ app.post('/posts/:id/like', (req, res) => {
     }
 
     const updateQuery = 'UPDATE Posts SET likes = likes + 1 WHERE id = ?';
-    db.query(updateQuery, [postId], (err, result) => {
+    db.query(updateQuery, [postId], (err) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
@@ -102,7 +121,7 @@ app.post('/posts/:id/comment', (req, res) => {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    const addCommentQuery = 'INSERT INTO Comments (post_id, author, content) VALUES (?, ?, ?)';
+    const addCommentQuery = 'INSERT INTO Comments (post_id, comment_author, content) VALUES (?, ?, ?)';
     db.query(addCommentQuery, [postId, author, content], (err, result) => {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -110,14 +129,13 @@ app.post('/posts/:id/comment', (req, res) => {
       const newComment = {
         id: result.insertId,
         post_id: postId,
-        author,
+        comment_author: author,
         content
       };
       res.status(201).json(newComment);
     });
   });
 });
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
