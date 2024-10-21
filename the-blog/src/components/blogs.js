@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { FaThumbsUp, FaComment } from 'react-icons/fa';
 
 const BlogView = ({ post }) => {
-  const [likes, setLikes] = useState(post.likes);
-  const [comments, setComments] = useState(post.comments);
+  // Provide default values if post properties are undefined
+  const [likes, setLikes] = useState(post?.likes || 0);
+  const [comments, setComments] = useState(post?.comments || []);
   const [newComment, setNewComment] = useState('');
   const [commentAuthor, setCommentAuthor] = useState('');
 
@@ -56,12 +57,12 @@ const BlogView = ({ post }) => {
 
   return (
     <div className="max-w-sm mx-auto bg-white shadow-lg bg-pink-100 rounded-lg overflow-hidden mb-3 grid-cols-3">
-      <img src={post.image} className="w-full h-48 object-cover" alt={post.title} />
+      <img src={post.image || 'default-image-url.jpg'} className="w-full h-48 object-cover" alt={post.title || 'Post Image'} />
       <div className="p-6">
-        <h5 className="text-2xl font-bold text-purple-600 mb-3">{post.title}</h5>
-        <p className="text-gray-700 mb-2">{post.content}</p>
-        <p className="text-gray-600"><strong>Author:</strong> {post.author}</p>
-        <p className="text-gray-600"><strong>Published on:</strong> {post.publishDate}</p>
+        <h5 className="text-2xl font-bold text-purple-600 mb-3">{post.title || 'Untitled Post'}</h5>
+        <p className="text-gray-700 mb-2">{post.content || 'No content available.'}</p>
+        <p className="text-gray-600"><strong>Author:</strong> {post.author || 'Unknown'}</p>
+        <p className="text-gray-600"><strong>Published on:</strong> {post.publishDate || 'Date not available'}</p>
         
         <button
           onClick={handleLike}
@@ -100,11 +101,16 @@ const BlogView = ({ post }) => {
 
         <h6 className="mt-6 font-bold text-gray-800">Comments:</h6>
         <ul className="list-disc pl-5">
-          {comments.map((comment, index) => (
-            <li key={index} className="mt-2 text-gray-700">
-              <strong>{comment.author}</strong>: {comment.content}
-            </li>
-          ))}
+          {/* Add a guard clause to ensure comments is defined and has elements */}
+          {comments && comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <li key={index} className="mt-2 text-gray-700">
+                <strong>{comment.author}</strong>: {comment.content}
+              </li>
+            ))
+          ) : (
+            <p className="text-gray-600">No comments yet. Be the first to comment!</p>
+          )}
         </ul>
       </div>
     </div>

@@ -6,37 +6,46 @@ import NewPost from './components/new-post';
 
 function App() {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('http://localhost:5000/posts')
       .then((response) => response.json())
-      .then((data) => setPosts(data))
-      .catch((error) => console.error('Error fetching posts:', error));
+      .then((data) => {
+        setPosts(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching posts:', error);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <Router>
       <div className="App">
-      <header className="App-header bg-gradient-to-r from-purple-500 to-pink-500 p-6">
-  <nav>
-    <ul className="flex justify-between items-center space-x-6">
-      
-      <li>
-        <Link to="/" className="text-white hover:text-gray-300">Home</Link>
-      </li>
-      <li>
-        <Link to="/blog" className="text-white hover:text-gray-300">Blog</Link>
-      </li>
-      <li>
-        <Link to="/new-post" className="text-white hover:text-gray-300">Add New Post</Link>
-      </li>
-    </ul>
-  </nav>
-  <h1 className="text-white text-4xl font-bold mt-4">
-    Onthatile The Photographer's Blog
-  </h1>
-</header>
-
+        <header className="App-header bg-gradient-to-r from-purple-500 to-pink-500 p-6">
+          <nav>
+            <ul className="flex justify-between items-center space-x-6">
+              <li>
+                <Link to="/" className="text-white hover:text-gray-300">Home</Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-white hover:text-gray-300">Blog</Link>
+              </li>
+              <li>
+                <Link to="/new-post" className="text-white hover:text-gray-300">Add New Post</Link>
+              </li>
+            </ul>
+          </nav>
+          <h1 className="text-white text-4xl font-bold mt-4">
+            Onthatile The Photographer's Blog
+          </h1>
+        </header>
 
         <main>
           <Routes>
@@ -44,7 +53,7 @@ function App() {
             <Route
               path="/blog"
               element={
-                posts.length > 0 ? (
+                posts && posts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-8">
                     {posts.map((post, index) => (
                       <BlogView key={index} post={post} />
