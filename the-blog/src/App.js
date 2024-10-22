@@ -1,11 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import LandingPage from './components/landing';
 import BlogView from './components/blogs';
 import NewPost from './components/new-post';
 import CRUDAuth from './components/CRUDAuth';
-import { FaLock } from 'react-icons/fa'; //
+import { FaLock } from 'react-icons/fa';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -31,7 +30,37 @@ function App() {
   };
 
   const handleHeaderClick = () => {
-    setModalOpen(true); // Open the login modal
+    setModalOpen(true);
+  };
+
+  const handleDeleteComment = async (commentId, postId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/posts/${postId}/comments/${commentId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete comment');
+      }
+
+      // Optionally, you can remove the comment from the local state here
+      setPosts((prevPosts) => 
+        prevPosts.map((post) => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              comments: post.comments.filter((comment) => comment.id !== commentId),
+            };
+          }
+          return post;
+        })
+      );
+      
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert('Failed to delete comment. Please try again.');
+    }
   };
 
   if (loading) {
@@ -72,25 +101,26 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route
-              path="/blog"
-              element={
-                posts && posts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-8">
-                    {posts.map((post, index) => (
-                      <BlogView key={index} post={post} />
-                    ))}
-                  </div>
-                ) : (
-                  <p>No blog posts available.</p>
-                )
-              }
-            />
+            <Route path="/blog" element={
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-8">
+                {posts.map((post) => (
+                  <BlogView 
+                    key={post.id} 
+                    post={post} 
+                    isLoggedIn={!!user} 
+                    onDeletePost={() => {}} 
+                    onEditPost={() => {}} 
+                    onDeleteComment={handleDeleteComment} 
+                  />
+                ))}
+              </div>
+            } />
             <Route path="/new-post" element={<NewPost />} />
+            <Route path="/auth" element={<CRUDAuth onLogin={handleLogin} />} />
           </Routes>
         </main>
 
-        {/* Login */}
+        {/* Login Modal */}
         <CRUDAuth isOpen={modalOpen} onClose={() => setModalOpen(false)} onLogin={handleLogin} />
       </div>
     </Router>

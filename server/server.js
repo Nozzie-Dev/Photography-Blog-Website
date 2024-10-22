@@ -212,7 +212,28 @@ app.post('/login', (req, res) => {
     if (results.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    res.json(results[0]); // Return user data or token
+    res.json(results[0]); 
+  });
+});
+
+// DELETE: Remove a comment
+app.delete('/posts/:postId/comments/:commentId', (req, res) => {
+  const postId = parseInt(req.params.postId);
+  const commentId = parseInt(req.params.commentId);
+ 
+  const findCommentQuery = 'SELECT * FROM Comments WHERE id = ? AND post_id = ?';
+  db.query(findCommentQuery, [commentId, postId], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    const deleteCommentQuery = 'DELETE FROM Comments WHERE id = ?';
+    db.query(deleteCommentQuery, [commentId], (err) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(204).send(); 
+    });
   });
 });
 
