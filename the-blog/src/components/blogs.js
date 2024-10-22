@@ -55,6 +55,9 @@ const BlogView = ({ post }) => {
     }
   };
 
+  // Format the publish date
+  const formattedDate = new Date(post.publish_date).toLocaleDateString();
+
   return (
     <div className="max-w-sm mx-auto bg-white shadow-lg bg-pink-100 rounded-lg overflow-hidden mb-3 grid-cols-3">
       <img src={post.image || 'default-image-url.jpg'} className="w-full h-48 object-cover" alt={post.title || 'Post Image'} />
@@ -62,7 +65,7 @@ const BlogView = ({ post }) => {
         <h5 className="text-2xl font-bold text-purple-600 mb-3">{post.title || 'Untitled Post'}</h5>
         <p className="text-gray-700 mb-2">{post.content || 'No content available.'}</p>
         <p className="text-gray-600"><strong>Author:</strong> {post.author || 'Unknown'}</p>
-        <p className="text-gray-600"><strong>Published on:</strong> {post.publishDate || 'Date not available'}</p>
+        <p className="text-gray-600"><strong>Published on:</strong> {formattedDate || 'Date not available'}</p>
         
         <button
           onClick={handleLike}
@@ -101,11 +104,10 @@ const BlogView = ({ post }) => {
 
         <h6 className="mt-6 font-bold text-gray-800">Comments:</h6>
         <ul className="list-disc pl-5">
-          {/* Add a guard clause to ensure comments is defined and has elements */}
           {comments && comments.length > 0 ? (
             comments.map((comment, index) => (
               <li key={index} className="mt-2 text-gray-700">
-                <strong>{comment.author}</strong>: {comment.content}
+                <strong>{comment.comment_author}</strong>: {comment.content}
               </li>
             ))
           ) : (

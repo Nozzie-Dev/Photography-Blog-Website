@@ -27,13 +27,12 @@ db.connect((err) => {
 
 // API Routes
 
-// GET: Read posts with likes and comments
+// GET: Read all posts
 app.get('/posts', (req, res) => {
   const query = `
-    SELECT p.id, p.title, p.author_id, a.fullname AS author, p.image, p.content, p.publish_date, p.likes
+    SELECT p.id, p.title, p.author_id, p.image, p.content, p.publish_date, p.likes, a.fullname AS author
     FROM Posts p
-    JOIN Authors a ON p.author_id = a.author_id
-  `;
+    LEFT JOIN Authors a ON p.author_id = a.author_id`;
   
   db.query(query, (err, results) => {
     if (err) {
@@ -43,20 +42,34 @@ app.get('/posts', (req, res) => {
   });
 });
 
-// GET: Read comments for each post
-app.get('/posts/:id/comments', (req, res) => {
+// GET: Read a single post by ID
+app.get('/posts/:id', (req, res) => {
   const postId = parseInt(req.params.id);
-  const query = 'SELECT * FROM Comments WHERE post_id = ?';
+
+  const query = `
+    SELECT p.id, p.title, p.author_id, p.image, p.content, p.publish_date, p.likes, a.fullname AS author
+    FROM Posts p
+    LEFT JOIN Authors a ON p.author_id = a.author_id
+    WHERE p.id = ?`;
 
   db.query(query, [postId], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+    if (err || results.length === 0) {
+      return res.status(404).json({ error: 'Post not found' });
     }
-    res.json(results);
+
+    // Fetch comments for this post
+    const commentsQuery = 'SELECT * FROM Comments WHERE post_id = ?';
+    db.query(commentsQuery, [postId], (err, comments) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      results[0].comments = comments;
+      res.json(results[0]);
+    });
   });
 });
 
-// POST: Add new post
+// POST: Add a new post
 app.post('/posts', (req, res) => {
   const { title, author_id, image, content } = req.body;
 
@@ -64,10 +77,8 @@ app.post('/posts', (req, res) => {
     return res.status(400).json({ error: 'Title, author, and content are required' });
   }
 
-  const query = `
-    INSERT INTO Posts (title, author_id, image, content, publish_date, likes) 
-    VALUES (?, ?, ?, ?, NOW(), 0)
-  `;
+  const query = `INSERT INTO Posts (title, author_id, image, content, publish_date, likes) 
+                 VALUES (?, ?, ?, ?, NOW(), 0)`;
 
   db.query(query, [title, author_id, image || 'https://via.placeholder.com/150', content], (err, result) => {
     if (err) {
@@ -81,12 +92,13 @@ app.post('/posts', (req, res) => {
       content,
       publish_date: new Date().toLocaleDateString(),
       likes: 0,
+      comments: [],
     };
     res.status(201).json(newPost);
   });
 });
 
-// POST: Like post
+// POST: Like a post
 app.post('/posts/:id/like', (req, res) => {
   const postId = parseInt(req.params.id);
 
@@ -130,7 +142,7 @@ app.post('/posts/:id/comment', (req, res) => {
         id: result.insertId,
         post_id: postId,
         comment_author: author,
-        content
+        content,
       };
       res.status(201).json(newComment);
     });
