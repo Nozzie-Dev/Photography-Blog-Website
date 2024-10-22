@@ -200,6 +200,23 @@ app.post('/posts/:id/comment', (req, res) => {
   });
 });
 
+// POST: Login
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  const query = 'SELECT * FROM Users WHERE username = ? AND password_ = ?';
+  db.query(query, [username, password], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (results.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    res.json(results[0]); // Return user data or token
+  });
+});
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

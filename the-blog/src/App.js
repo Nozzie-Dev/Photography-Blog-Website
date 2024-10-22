@@ -1,12 +1,17 @@
+
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import LandingPage from './components/landing';
 import BlogView from './components/blogs';
 import NewPost from './components/new-post';
+import CRUDAuth from './components/CRUDAuth';
+import { FaLock } from 'react-icons/fa'; //
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetch('http://localhost:5000/posts')
@@ -20,6 +25,14 @@ function App() {
         setLoading(false);
       });
   }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+
+  const handleHeaderClick = () => {
+    setModalOpen(true); // Open the login modal
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -42,8 +55,17 @@ function App() {
               </li>
             </ul>
           </nav>
-          <h1 className="text-white text-4xl font-bold mt-4">
-            Onthatile The Photographer's Blog
+          <h1
+            onClick={handleHeaderClick}
+            className="text-white text-4xl font-bold mt-4 flex items-center cursor-pointer"
+          >
+            {user ? (
+              <>
+                <span className="ml-2"><FaLock /></span> Onthatile The Photographer's Blog
+              </>
+            ) : (
+              'Onthatile The Photographer\'s Blog'
+            )}
           </h1>
         </header>
 
@@ -67,6 +89,9 @@ function App() {
             <Route path="/new-post" element={<NewPost />} />
           </Routes>
         </main>
+
+        {/* Login */}
+        <CRUDAuth isOpen={modalOpen} onClose={() => setModalOpen(false)} onLogin={handleLogin} />
       </div>
     </Router>
   );
