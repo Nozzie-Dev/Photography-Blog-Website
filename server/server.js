@@ -27,46 +27,58 @@ db.connect((err) => {
 
 // API Routes
 
-// GET: Read all posts
-app.get('/posts', (req, res) => {
+app.get('/posts', async (req, res) => {
   const query = `
-    SELECT p.id, p.title, p.author_id, p.image, p.content, p.publish_date, p.likes, a.fullname AS author
-    FROM Posts p
-    LEFT JOIN Authors a ON p.author_id = a.author_id`;
-  
-  db.query(query, (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(results);
-  });
-});
-
-// GET: Read a single post by ID
-app.get('/posts/:id', (req, res) => {
-  const postId = parseInt(req.params.id);
-
-  const query = `
-    SELECT p.id, p.title, p.author_id, p.image, p.content, p.publish_date, p.likes, a.fullname AS author
+    SELECT 
+      p.id AS post_id, p.title, p.author_id, p.image, p.content, p.publish_date, p.likes, 
+      a.fullname AS author, 
+      c.comment_author, c.content AS comment_content
     FROM Posts p
     LEFT JOIN Authors a ON p.author_id = a.author_id
-    WHERE p.id = ?`;
+    LEFT JOIN Comments c ON p.id = c.post_id
+    ORDER BY p.id, c.id`;  
 
-  db.query(query, [postId], (err, results) => {
-    if (err || results.length === 0) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
+  try {
+    const [results] = await db.promise().query(query);
 
-    // Fetch comments for this post
-    const commentsQuery = 'SELECT * FROM Comments WHERE post_id = ?';
-    db.query(commentsQuery, [postId], (err, comments) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
+    // Reformat results to group comments under each post
+    const postsMap = {};
+
+    results.forEach(row => {
+      const postId = row.post_id;
+
+      if (!postsMap[postId]) {
+        // Initialize the post in the map
+        postsMap[postId] = {
+          id: postId,
+          title: row.title,
+          author_id: row.author_id,
+          image: row.image,
+          content: row.content,
+          publish_date: row.publish_date,
+          likes: row.likes,
+          author: row.author,
+          comments: []
+        };
       }
-      results[0].comments = comments;
-      res.json(results[0]);
+
+      // If there is a comment, add it to the post's comments array
+      if (row.comment_author && row.comment_content) {
+        postsMap[postId].comments.push({
+          comment_author: row.comment_author,
+          content: row.comment_content
+        });
+      }
     });
-  });
+
+    // Convert posts map back to an array
+    const posts = Object.values(postsMap);
+
+    res.json(posts);
+  } catch (err) {
+    console.error('Error fetching posts and comments:', err);
+    res.status(500).json({ error: 'Failed to fetch posts and comments' });
+  }
 });
 
 // POST: Add new post

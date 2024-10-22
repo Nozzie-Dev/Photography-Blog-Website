@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { FaThumbsUp, FaComment } from 'react-icons/fa';
 
 const BlogView = ({ post }) => {
-  // Provide default values if post properties are undefined
   const [likes, setLikes] = useState(post?.likes || 0);
   const [comments, setComments] = useState(post?.comments || []);
   const [newComment, setNewComment] = useState('');
@@ -104,11 +103,11 @@ const BlogView = ({ post }) => {
 
         <h6 className="mt-6 font-bold text-gray-800">Comments:</h6>
         <ul className="list-disc pl-5">
-          {comments && comments.length > 0 ? (
-            comments.map((comment, index) => (
-              <li key={index} className="mt-2 text-gray-700">
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <ul key={comment.id} className="mt-2 text-gray-700">
                 <strong>{comment.comment_author}</strong>: {comment.content}
-              </li>
+              </ul>
             ))
           ) : (
             <p className="text-gray-600">No comments yet. Be the first to comment!</p>
