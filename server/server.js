@@ -69,34 +69,73 @@ app.get('/posts/:id', (req, res) => {
   });
 });
 
-// POST: Add a new post
+// POST: Add new post
 app.post('/posts', (req, res) => {
-  const { title, author_id, image, content } = req.body;
+  const { title, author, image, content } = req.body;
 
-  if (!title || !author_id || !content) {
-    return res.status(400).json({ error: 'Title, author, and content are required' });
+  if (!title) {
+    return res.status(400).json({ error: 'Title is required' });
+  }
+  if (!author) {
+    return res.status(400).json({ error: 'Author is required' });
+  }
+  if (!content) {
+    return res.status(400).json({ error: 'Content is required' });
   }
 
-  const query = `INSERT INTO Posts (title, author_id, image, content, publish_date, likes) 
-                 VALUES (?, ?, ?, ?, NOW(), 0)`;
-
-  db.query(query, [title, author_id, image || 'https://via.placeholder.com/150', content], (err, result) => {
+  // Check if the author exists, if not, add them to the table
+  const authorQuery = 'SELECT author_id FROM Authors WHERE fullname = ?';
+  db.query(authorQuery, [author], (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    const newPost = {
-      id: result.insertId,
-      title,
-      author_id,
-      image: image || 'https://via.placeholder.com/150',
-      content,
-      publish_date: new Date().toLocaleDateString(),
-      likes: 0,
-      comments: [],
-    };
-    res.status(201).json(newPost);
+
+    let authorId;
+    if (results.length > 0) {
+      // Author exists
+      authorId = results[0].author_id;
+    } else {
+      // Insert new author
+      const insertAuthorQuery = 'INSERT INTO Authors (fullname) VALUES (?)';
+      db.query(insertAuthorQuery, [author], (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        // Get the new author's ID
+        authorId = result.insertId; 
+        createPost(); 
+      });
+      // Pause to add author
+      return; 
+    }
+
+    
+    // Create the post after confirming author IDcreatePost(); 
+
+    function createPost() {
+      const query = `INSERT INTO Posts (title, author_id, image, content, publish_date, likes) 
+                     VALUES (?, ?, ?, ?, NOW(), 0)`;
+
+      db.query(query, [title, authorId, image || 'https://via.placeholder.com/150', content], (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        const newPost = {
+          id: result.insertId,
+          title,
+          author_id: authorId,
+          image: image || 'https://via.placeholder.com/150',
+          content,
+          publish_date: new Date().toLocaleDateString(),
+          likes: 0,
+          comments: [],
+        };
+        res.status(201).json(newPost);
+      });
+    }
   });
 });
+
 
 // POST: Like a post
 app.post('/posts/:id/like', (req, res) => {

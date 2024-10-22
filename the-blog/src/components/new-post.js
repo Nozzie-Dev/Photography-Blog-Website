@@ -13,23 +13,31 @@ const NewPost = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    //Prove form data for debugging
+    console.log('Form Data:', formData); 
 
-    fetch('http://localhost:5000/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then(() => {
-        console.log('New post added');
-        // Navigate to and reload the blog page
-        window.location.href = '/blog'; 
-      })
-      .catch((error) => console.error('Error adding post:', error));
+    try {
+      const response = await fetch('http://localhost:5000/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to add post');
+      }
+
+      console.log('New post added');
+      // Load the blog page
+      window.location.href = '/blog'; 
+    } catch (error) {
+      console.error('Error adding post:', error);
+    }
   };
 
   return (
